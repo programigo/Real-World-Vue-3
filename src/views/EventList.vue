@@ -24,7 +24,6 @@
 
 <script>
 
-import { watchEffect } from "vue";
 import EventCard from "@/components/EventCard.vue";
 import EventService from "@/services/EventService";
 
@@ -42,26 +41,43 @@ export default {
       totalEvents: 0,
     };
   },
-  created() {
-    watchEffect(async() => {
+  async beforeRouteEnter(routeTo, routeFrom, next) {
       try {
-        this.events = null;
-        const response = (await EventService.getEvents(2, this.page));
-        this.events = response.data;
-        this.totalEvents = response.headers["x-total-count"];
+        const response = (await EventService.getEvents(2, parseInt(routeTo.query.page) || 1));
+        
+        if (response) {
+          next(comp => {
+            comp.events = response.data;
+            comp.totalEvents = response.headers['x-total-count'];
+          })
+        }
       } catch(e) {
         if(e.response && e.response.status === 404) {
-            this.$router.push({ name: "404Resource", params: { resource: "events" } });
+            next({ name: "404Resource", params: { resource: "events" } });
         } else {
-            this.$router.push({ name: "NetworkError" });
+            next({ name: 'NetworkError' }) 
         }
       }
-    })
+  },
+  async beforeRouteUpdate(routeTo) {
+    try {
+      const response = (await EventService.getEvents(2, parseInt(routeTo.query.page) || 1));
+
+      if (response) {
+        this.events = response.data;
+        this.totalEvents = response.headers['x-total-count'];
+      }
+    } catch(e) {
+      if (e.response && e.response.status === 404) {
+            return { name: "404Resource", params: { resource: "events" } };
+        } else {
+            return { name: 'NetworkError' };
+        }
+    }
   },
   computed: {
     hasNextPage() {
       const totalPages = Math.ceil(this.totalEvents / 2);
-
       return this.page < totalPages;
     }
   }
