@@ -1,13 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import About from "@/views/About.vue";
-import EventDetails from "@/views/event/Details.vue";
-import EventEdit from "@/views/event/Edit.vue";
-import EventRegister from "@/views/event/Register.vue";
-import EventList from "@/views/EventList.vue";
-import EventLayout from "@/views/event/Layout.vue";
 import EventService from "@/services/EventService.js";
-import NotFound from "@/views/NotFound.vue";
-import NetworkError from "@/views/NetworkError.vue";
 import NProgress from "nprogress";
 import GStore from "@/store";
 
@@ -15,13 +7,13 @@ const routes = [
   {
     path: "/",
     name: "EventList",
-    component: EventList,
+    component: () => import(/* webpackChunkName: event-list */ "@/views/EventList.vue"),
     props: route => ({page: parseInt(route.query.page || 1)}),
   },
   {
     path: "/events/:id",
     name: "EventLayout",
-    component: EventLayout,
+    component: () => import(/* webpackChunkName: event-layout */ "@/views/event/Layout.vue"),
     beforeEnter: async function (to) {
       try {
         GStore.event = (await EventService.getEvent(to.params.id)).data;
@@ -38,54 +30,77 @@ const routes = [
         path: "",
         name: "EventDetails",
         props: true,
-        component: EventDetails,
+        component: () => import(/* webpackChunkName: event-details */ "@/views/event/Details.vue"),
       },
       {
         path: "edit",
         name: "EventEdit",
         props: true,
-        component: EventEdit,
+        component: () => import(/* webpackChunkName: event-edit */ "@/views/event/Edit.vue"),
+        meta: { requireAuth: true },
       },
       {
         path: "register",
         name: "EventRegister",
         props: true,
-        component: EventRegister,
+        component: () => import(/* webpackChunkName: register */ "@/views/event/Register.vue"),
+        meta: { requireAuth: true },
       },
     ]
   },
   {
     path: "/about",
     name: "About",
-    component: About,
+    component: () => import(/* webpackChunkName: about */ "@/views/About.vue"),
   },
   {
     path: "/:catchAll(.*)",
     name: "NotFound",
     props: true,
-    component: NotFound,
+    component: () => import(/* webpackChunkName: not-found */ "@/views/NotFound.vue"),
   },
   {
     path: "/404/:resource",
     name: "404Resource",
     props: true,
-    component: NotFound,
+    component: () => import(/* webpackChunkName: 404-resource */ "@/views/NotFound.vue"),
   },
   {
     path: "/network-error",
     name: "NetworkError",
     props: true,
-    component: NetworkError,
+    component: () => import(/* webpackChunkName: network-error */ "@/views/NetworkError.vue"),
   },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    }
+    
+    return { top: 0 }
+  }
 });
 
-router.beforeEach(() => {
+router.beforeEach((to, from) => {
   NProgress.start();
+
+  if (to.meta.requireAuth) {
+    GStore.flashMessage = "Sorry, you are not authorized to view this page";
+
+    setTimeout(() => {
+      GStore.flashMessage = ""
+    }, 3000);
+
+    if (from.href) {
+      return false;
+    } else {
+      return { path: "/" };
+    }
+  }
 });
 
 router.afterEach(() => {
