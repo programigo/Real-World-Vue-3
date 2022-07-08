@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import EventService from "@/services/EventService.js";
 import NProgress from "nprogress";
-import GStore from "@/store";
+import ErrorDisplay from "../views/ErrorDisplay.vue";
 
 const routes = [
   {
@@ -12,41 +11,15 @@ const routes = [
   },
   {
     path: "/events/:id",
-    name: "EventLayout",
-    component: () => import(/* webpackChunkName: event-layout */ "@/views/event/Layout.vue"),
-    beforeEnter: async function (to) {
-      try {
-        GStore.event = (await EventService.getEvent(to.params.id)).data;
-      } catch (e) {
-        if (e.response && e.response.status === 404) {
-          return { name: "404Resource", params: { resource: "event" } };
-        } else {
-          return { name: "NetworkError" };
-        }
-      }
-    },
-    children: [
-      {
-        path: "",
-        name: "EventDetails",
-        props: true,
-        component: () => import(/* webpackChunkName: event-details */ "@/views/event/Details.vue"),
-      },
-      {
-        path: "edit",
-        name: "EventEdit",
-        props: true,
-        component: () => import(/* webpackChunkName: event-edit */ "@/views/event/Edit.vue"),
-        meta: { requireAuth: true },
-      },
-      {
-        path: "register",
-        name: "EventRegister",
-        props: true,
-        component: () => import(/* webpackChunkName: register */ "@/views/event/Register.vue"),
-        meta: { requireAuth: true },
-      },
-    ]
+    name: "EventDetails",
+    props: true,
+    component: () => import(/* webpackChunkName: event-details */ "@/views/event/Details.vue"),
+  },
+  {
+    path: "/events/create",
+    name: "EventCreate",
+    component: () => import(/* webpackChunkName: event-create */ "@/views/event/Create.vue"),
+    meta: { requiresAuth: true },
   },
   {
     path: "/about",
@@ -71,6 +44,12 @@ const routes = [
     props: true,
     component: () => import(/* webpackChunkName: network-error */ "@/views/NetworkError.vue"),
   },
+  {
+    path: "/error/:error",
+    name: "ErrorDisplay",
+    props: true,
+    component: ErrorDisplay,
+  },
 ];
 
 const router = createRouter({
@@ -89,12 +68,6 @@ router.beforeEach((to, from) => {
   NProgress.start();
 
   if (to.meta.requireAuth) {
-    GStore.flashMessage = "Sorry, you are not authorized to view this page";
-
-    setTimeout(() => {
-      GStore.flashMessage = ""
-    }, 3000);
-
     if (from.href) {
       return false;
     } else {

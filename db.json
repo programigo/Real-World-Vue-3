@@ -1,0 +1,104 @@
+{
+  "events": [
+    {
+      "id": 123,
+      "category": "animal welfare",
+      "title": "Cat Adoption Day",
+      "description": "Find your new feline friend at this event.",
+      "location": "Meow Town",
+      "date": "January 28, 2022",
+      "time": "12:00",
+      "organizer": "Kat Laydee"
+    },
+    {
+      "id": 456,
+      "category": "food",
+      "title": "Community Gardening",
+      "description": "Join us as we tend to the community edible plants.",
+      "location": "Flora City",
+      "date": "March 14, 2022",
+      "time": "10:00",
+      "organizer": "Fern Pollin"
+    },
+    {
+      "id": 789,
+      "category": "sustainability",
+      "title": "Beach Cleanup",
+      "description": "Help pick up trash along the shore.",
+      "location": "Playa Del Carmen",
+      "date": "July 22, 2022",
+      "time": "11:00",
+      "organizer": "Carey Wales"
+    },
+    {
+      "id": "6272a896-f8e9-41ac-9fee-a825f3850b68",
+      "category": "nature",
+      "title": "Dog shelter help",
+      "description": "Doggy",
+      "location": "Kazanlak",
+      "date": "27.06.2022",
+      "time": "10AM",
+      "organizer": "Krasimir Vladimirov"
+    },
+    {
+      "id": "ca7b5c3f-4d40-4d71-983a-de692792ee29",
+      "category": "education",
+      "title": "SoftUni Camp",
+      "description": "Programmer camp",
+      "location": "Sofia",
+      "date": "26 August 2022",
+      "time": "10:00",
+      "organizer": "Krasimir Vladimirov"
+    },
+    {
+      "id": "8f90ae5d-1efd-4def-8d22-ea82db635f8b",
+      "category": "education",
+      "title": "SoftUni camp",
+      "description": "Programmer camp",
+      "location": "Sofia",
+      "date": "26 August 2022",
+      "time": "10:00",
+      "organizer": "Krasimir Vladimirov"
+    },
+    {
+      "id": "e681f9b4-1ee5-49c1-8d79-a4a7df9c86c4",
+      "category": "animal welfare",
+      "title": "Feeding homeless animals",
+      "description": "They deserve it",
+      "location": "Sofia",
+      "date": "22 August 2022",
+      "time": "11:00",
+      "organizer": "Krasimir Vladimirov"
+    },
+    {
+      "id": "2e702106-203d-4475-a029-ff89186dfc2d",
+      "category": "nature",
+      "title": "Test event",
+      "description": "Test",
+      "location": "Kazanlak",
+      "date": "22 August 2022",
+      "time": "10:00",
+      "organizer": "Krasimir Vladimirov"
+    },
+    {
+      "id": "d49a0c5d-405c-43d7-bd6c-23fb8c01d1bf",
+      "category": "nature",
+      "title": "Test nature event",
+      "description": "Nature",
+      "location": "Sofia",
+      "date": "23 August 2022",
+      "time": "10:00",
+      "organizer": "Krasimir Vladimirov"
+    },
+    {
+      "id": "dbc8eec9-f724-436e-8a3b-3255b35dd368",
+      "category": "sustainability",
+      "title": "Cycling championship",
+      "description": "Road bikes",
+      "location": "Kazanlak",
+      "date": "23 September 2022",
+      "time": "15:00",
+      "organizer": "Krasimir Vladimirov"
+    }
+  ]
+}

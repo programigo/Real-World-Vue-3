@@ -25,7 +25,10 @@
 <script>
 
 import EventCard from "@/components/EventCard.vue";
-import EventService from "@/services/EventService";
+import store from "@/store";
+import router from "@/router";
+
+const EVENTS_PER_PAGE = 8;
 
 export default {
   name: "EventList",
@@ -35,50 +38,41 @@ export default {
   components: {
     EventCard,
   },
-  data() {
-    return {
-      events: null,
-      totalEvents: 0,
-    };
-  },
   async beforeRouteEnter(routeTo, routeFrom, next) {
       try {
-        const response = (await EventService.getEvents(2, parseInt(routeTo.query.page) || 1));
-        
-        if (response) {
-          next(comp => {
-            comp.events = response.data;
-            comp.totalEvents = response.headers['x-total-count'];
-          })
-        }
+        const payload = {
+          perPage: EVENTS_PER_PAGE,
+          page: parseInt(routeTo.query.page) || 1,
+        };
+
+        await store.dispatch("getEvents", payload);
+        next();
       } catch(e) {
-        if(e.response && e.response.status === 404) {
-            next({ name: "404Resource", params: { resource: "events" } });
-        } else {
-            next({ name: 'NetworkError' }) 
-        }
+        router.push({ name: "ErrorDisplay", params: { error: e } });
       }
   },
   async beforeRouteUpdate(routeTo) {
     try {
-      const response = (await EventService.getEvents(2, parseInt(routeTo.query.page) || 1));
+      const payload = {
+        perPage: EVENTS_PER_PAGE,
+        page: parseInt(routeTo.query.page) || 1,
+      };
 
-      if (response) {
-        this.events = response.data;
-        this.totalEvents = response.headers['x-total-count'];
-      }
+      await store.dispatch("getEvents", payload);
     } catch(e) {
-      if (e.response && e.response.status === 404) {
-            return { name: "404Resource", params: { resource: "events" } };
-        } else {
-            return { name: 'NetworkError' };
-        }
+      router.push({ name: "ErrorDisplay", params: { error: e } });
     }
   },
   computed: {
     hasNextPage() {
       const totalPages = Math.ceil(this.totalEvents / 2);
       return this.page < totalPages;
+    },
+    events() {
+      return store.state.events;
+    },
+    totalEvents() {
+      return store.state.events.length;
     }
   }
 };
